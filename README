@@ -40,6 +40,15 @@ Now edit your snmpd.conf to include a line like this:
 where MIBOID is the same as base_oid in the code above sans quotes. Restart 
 your snmpd and you should be able to snmpwalk your base_oid.
 
+
+Examples
+--------
+
+You can find some (real world) examples here:
+
+  http://github.com/craigw/xeriom-nagios-snmp-agents
+
+
 Authors
 -------
 Written by Dave Evans <http://djce.org.uk/>
