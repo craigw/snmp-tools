@@ -1,3 +1,46 @@
-Tools for working with SNMP.
+Tools for working with SNMP
+===========================
 
+Create a pass_persist agent by doing this:
+
+    require 'snmp-tools'
+
+    # IMPORTANT! Get your own OID from IANA or you will break things!
+    # It costs nothing and doesn't take very long.
+    #   http://pen.iana.org/pen/PenApplication.page
+    #
+    enterprise_oid = ".1.3.6.1.4.1.NNNNN"
+
+    # Pick a base OID which all the results here will live under.
+    #
+    base_oid = "#{enterprise_oid}.1.2.3"
+
+    agent = SnmpdPassPersistAgent.new do |snmp|
+      # For a simple query
+      snmp.push(SnmpTriple.new("#{base_oid}.4.5.6", "string", "1.2.54"))
+      # For a query that will take longer to run you can pass a lambda.
+      proc = proc {
+        # ... SELECT COUNT * FROM uber_huge_table ...
+      }
+      snmp.push(SnmpTriple.new("#{base_oid}.4.5.7", "integer", proc))
+    end
+
+    agent.run
+
+Make sure the file containing this code is chmod +x. Test it like this:
+
+  echo DUMP | /path/to/file
+
+You should get a bunch of output containing the OIDs and the current values.
+
+Now edit your snmpd.conf to include a line like this:
+
+    pass_persist MIBOID /path/to/file
+
+where MIBOID is the same as base_oid in the code above sans quotes. Restart 
+your snmpd and you should be able to snmpwalk your base_oid.
+
+Authors
+-------
 Written by Dave Evans <http://djce.org.uk/>
+Documentation by Craig R Webster <http://barkingiguana.com/~craig/>
