@@ -1,5 +1,6 @@
 module Snmp
-  # SnmpTriple is a tuple of (SnmpOid, SNMP type, value) - sortable on SnmpOid
+  # A tuple of (SnmpOid, SNMP type, value).
+  #
   class Triple
     attr_reader :oid, :type, :value
 

@@ -1,5 +1,6 @@
 module Snmp
-  # SnmpOid is a sortable numeric OID string
+  # A sortable numeric OID string
+  #
   class Oid
     include Comparable
 
