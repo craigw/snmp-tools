@@ -32,14 +32,7 @@ module Snmp
       @in_fh = args[:in_fh] || STDIN
       @out_fh = args[:out_fh] || STDOUT
       @idle_timeout = args[:idle_timeout] || 60
-
-      if block_given?
-        @prep = block
-      else
-        @prep = args[:prepare_responses]
-      end
-      @get = args[:get]
-      @getnext = args[:getnext]
+      @prep = block
     end
 
     def dump
@@ -80,15 +73,9 @@ module Snmp
       set
     end
 
-    def _do_get(oid, hook, message)
-      if not hook.nil?
-        triple = hook.call(oid)
-      elsif not @prep.nil?
-        ts = do_prepare
-        triple = ts.send(message, oid)
-      else
-        raise "Can't " + message
-      end
+    def _do_get(oid, message)
+      ts = do_prepare
+      triple = ts.send(message, oid)
 
       if triple.nil?
         put_lines "NONE"
@@ -98,11 +85,11 @@ module Snmp
     end
 
     def do_get(oid)
-      _do_get oid, @get, "get"
+      _do_get oid, "get"
     end
 
     def do_getnext(oid)
-      _do_get oid, @getnext, "getnext"
+      _do_get oid, "getnext"
     end
 
     def run
