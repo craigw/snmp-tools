@@ -36,9 +36,7 @@ module Snmp
     end
 
     def dump
-      set = SnmpTripleSet.new
-      @prep.call(set)
-      set.make_index
+      set = triple_set
       put_lines set.triples
       put_lines "."
     end
@@ -66,7 +64,7 @@ module Snmp
       put_lines [ t.oid, t.type, t.value ]
     end
 
-    def do_prepare
+    def triple_set
       set = SnmpTripleSet.new
       @prep.call(set)
       set.make_index
@@ -74,8 +72,7 @@ module Snmp
     end
 
     def _do_get(oid, message)
-      ts = do_prepare
-      triple = ts.send(message, oid)
+      triple = triple_set.send(message, oid)
 
       if triple.nil?
         put_lines "NONE"
