@@ -42,7 +42,13 @@ module Snmp
     end
 
     def get_line
-      l = Timeout::timeout(@idle_timeout) { @in_fh.gets }
+      l = begin
+        Timeout::timeout(@idle_timeout) { @in_fh.gets }
+      rescue Timeout::Error
+        @logger.debug "Agent idle timeout after #{@idle_timeout} seconds"
+        exit
+      end
+
       if l.nil?
         @logger.debug("> <eof>")
         return nil
@@ -89,36 +95,34 @@ module Snmp
       @logger.debug("Agent starting")
       quit = false
 
-      begin
-        while not quit
-          l = get_line
-          break if l.nil?
+      while not quit
+        l = get_line
+        break if l.nil?
 
-          case l
-            # snmpd doesn't need these commands to be
-            # case-insensitive; I've made them that way for easier
-            # debugging
-          when /^ping$/i
-            put_lines "PONG" 
-          when /^get$/i
-            get(SnmpOid.new(get_line))
-          when /^getnext$/i
-            get_next(SnmpOid.new(get_line))
-          when /^set$/i
-            ignore = get_line
-            put_lines "not-writable"
+        case l
+          # snmpd doesn't need these commands to be
+          # case-insensitive; I've made them that way for easier
+          # debugging
+        when /^ping$/i
+          put_lines "PONG"
+        when /^get$/i
+          get(SnmpOid.new(get_line))
+        when /^getnext$/i
+          get_next(SnmpOid.new(get_line))
+        when /^set$/i
+          ignore = get_line
+          put_lines "not-writable"
 
-            # Additional commands not used by snmpd
-          when /^(exit|quit)$/i
-            put_lines "BYE"
-            quit = true
-          when /^dump$/i
-            dump
-          else
-            put_lines "unknown-command"
-          end
+          # Additional commands not used by snmpd
+        when /^(exit|quit)$/i
+          put_lines "BYE"
+          quit = true
+          @logger.debug("Agent asked to quit (#{l})")
+        when /^dump$/i
+          dump
+        else
+          put_lines "unknown-command"
         end
-      rescue Timeout::Error
       end
       @logger.debug("Agent exiting")
     end
