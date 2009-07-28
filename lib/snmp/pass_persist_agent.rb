@@ -28,6 +28,7 @@ module Snmp
   #
   class PassPersistAgent
     def initialize(args = {}, &block)
+      @logger = args[:logger] || Logger.new("/dev/null")
       @in_fh = args[:in_fh] || STDIN
       @out_fh = args[:out_fh] || STDOUT
       @idle_timeout = args[:idle_timeout] || 60
@@ -49,22 +50,19 @@ module Snmp
       put_lines "."
     end
 
-    def log(s)
-    end
-
     def get_line
       l = Timeout::timeout(@idle_timeout) { @in_fh.gets }
       if l.nil?
-        log("> <eof>")
+        @logger.debug("> <eof>")
         return nil
       end
       l.chomp!
-      log("> "+l)
+      @logger.debug("> "+l)
       l
     end
 
     def put_lines(s)
-      s.each { |x| log("< "+x.to_s) }
+      s.each { |x| logger.debug("< "+x.to_s) }
       s.each { |x| @out_fh.print x.to_s+"\n" }
       @out_fh.flush
     end
@@ -106,6 +104,7 @@ module Snmp
     end
 
     def run
+      @logger.debug("Agent starting")
       quit = false
 
       begin
@@ -139,6 +138,7 @@ module Snmp
         end
       rescue Timeout::Error
       end
+      @logger.debug("Agent exiting")
     end
   end
 end

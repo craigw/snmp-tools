@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'time'
 require 'timeout'
+require 'logger'
 
 require 'snmp/oid'
 require 'snmp/triple'
