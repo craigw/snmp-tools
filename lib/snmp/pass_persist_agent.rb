@@ -71,7 +71,7 @@ module Snmp
       set
     end
 
-    def _do_get(oid, message)
+    def get(oid, message = "get")
       triple = triple_set.send(message, oid)
 
       if triple.nil?
@@ -81,12 +81,8 @@ module Snmp
       end
     end
 
-    def get(oid)
-      _do_get oid, "get"
-    end
-
     def get_next(oid)
-      _do_get oid, "getnext"
+      get oid, "getnext"
     end
 
     def run
