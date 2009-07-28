@@ -100,7 +100,9 @@ module Snmp
         @logger.debug("Launching refresh thread")
         Thread.new do
           sleep @refresh_interval
+          @logger.debug("Refreshing triple set")
           populate_triple_set
+          @logger.debug("Loaded #{@triple_set.triples.size} values")
         end
         @logger.debug("Launched refresh thread")
       end
