@@ -120,9 +120,9 @@ module Snmp
         when /^ping$/i
           put_lines "PONG"
         when /^get$/i
-          get(SnmpOid.new(get_line))
+          get(Snmp::Oid.new(get_line))
         when /^getnext$/i
-          get_next(SnmpOid.new(get_line))
+          get_next(Snmp::Oid.new(get_line))
         when /^set$/i
           ignore = get_line
           put_lines "not-writable"
