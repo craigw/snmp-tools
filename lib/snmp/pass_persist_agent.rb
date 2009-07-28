@@ -32,6 +32,7 @@ module Snmp
       @in_fh = args[:in_fh] || STDIN
       @out_fh = args[:out_fh] || STDOUT
       @idle_timeout = args[:idle_timeout] || 60
+      @refresh_interval = args[:refresh_interval] || false
       @prep = block
     end
 
@@ -71,10 +72,7 @@ module Snmp
     end
 
     def triple_set
-      set = SnmpTripleSet.new
-      @prep.call(set)
-      set.make_index
-      set
+      @triple_set || populate_triple_set
     end
 
     def get(oid, message = "get")
@@ -93,6 +91,20 @@ module Snmp
 
     def run
       @logger.debug("Agent starting")
+
+      @logger.debug("Loading initial values")
+      populate_triple_set
+      @logger.debug("Loaded #{@triple_set.triples.size} values")
+
+      if @refresh_interval
+        @logger.debug("Launching refresh thread")
+        Thread.new do
+          sleep @refresh_interval
+          populate_triple_set
+        end
+        @logger.debug("Launched refresh thread")
+      end
+
       quit = false
 
       while not quit
@@ -125,6 +137,14 @@ module Snmp
         end
       end
       @logger.debug("Agent exiting")
+    end
+
+    private
+    def populate_triple_set
+      set = SnmpTripleSet.new
+      @prep.call(set)
+      set.make_index
+      @triple_set = set
     end
   end
 end
