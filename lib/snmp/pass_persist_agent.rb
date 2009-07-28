@@ -62,8 +62,10 @@ module Snmp
     end
 
     def put_lines(s)
-      s.each { |x| logger.debug("< "+x.to_s) }
-      s.each { |x| @out_fh.print x.to_s+"\n" }
+      s.each { |x| 
+        logger.debug("< "+x.to_s)
+        @out_fh.print x.to_s+"\n"
+      }
       @out_fh.flush
     end
 
