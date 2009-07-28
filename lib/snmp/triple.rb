@@ -1,5 +1,5 @@
 module Snmp
-  # A tuple of (SnmpOid, SNMP type, value).
+  # A tuple of (Snmp::Oid, SNMP type, value).
   #
   class Triple
     attr_reader :oid, :type, :value
@@ -12,7 +12,7 @@ module Snmp
         raise "Bad SNMP type '%s'" % type
       end
 
-      oid = SnmpOid.new(oid) unless oid.kind_of?(SnmpOid)
+      oid = Snmp::Oid.new(oid) unless oid.kind_of?(Snmp::Oid)
 
       @oid = oid
       @type = type
