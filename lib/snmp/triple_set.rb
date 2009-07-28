@@ -3,6 +3,10 @@ module Snmp
   # an OID sub-tree
   #
   class TripleSet
+    # All Triples in this set.
+    #
+    attr_reader :triples
+
     def initialize
       @triples = []
     end
@@ -34,12 +38,6 @@ module Snmp
     def getnext(oid)
       @triples.each { |x| return x if x.oid > oid }
       nil
-    end
-
-    # Get all Triples in the set.
-    #
-    def triples
-      @triples
     end
   end
 end
