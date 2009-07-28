@@ -143,7 +143,7 @@ module Snmp
 
     private
     def populate_triple_set
-      set = SnmpTripleSet.new
+      set = Snmp::TripleSet.new
       @prep.call(set)
       set.make_index
       @triple_set = set
