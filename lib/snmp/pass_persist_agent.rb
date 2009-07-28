@@ -57,7 +57,7 @@ module Snmp
         return nil
       end
       l.chomp!
-      @logger.debug("> "+l)
+      @logger.debug("> #{l}")
       l
     end
 
