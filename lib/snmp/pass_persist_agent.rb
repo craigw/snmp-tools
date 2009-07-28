@@ -81,11 +81,11 @@ module Snmp
       end
     end
 
-    def do_get(oid)
+    def get(oid)
       _do_get oid, "get"
     end
 
-    def do_getnext(oid)
+    def get_next(oid)
       _do_get oid, "getnext"
     end
 
@@ -105,9 +105,9 @@ module Snmp
           when /^ping$/i
             put_lines "PONG" 
           when /^get$/i
-            do_get(SnmpOid.new(get_line))
+            get(SnmpOid.new(get_line))
           when /^getnext$/i
-            do_getnext(SnmpOid.new(get_line))
+            get_next(SnmpOid.new(get_line))
           when /^set$/i
             ignore = get_line
             put_lines "not-writable"
