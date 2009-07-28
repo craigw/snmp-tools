@@ -15,14 +15,14 @@ Create a pass_persist agent by doing this:
     #
     base_oid = "#{enterprise_oid}.1.2.3"
 
-    agent = SnmpdPassPersistAgent.new do |snmp|
+    agent = Snmp::PassPersistAgent.new do |snmp|
       # For a simple query
-      snmp.push(SnmpTriple.new("#{base_oid}.4.5.6", "string", "1.2.54"))
+      snmp.push(Snmp::Triple.new("#{base_oid}.4.5.6", "string", "1.2.54"))
       # For a query that will take longer to run you can pass a lambda.
       proc = proc {
         # ... SELECT COUNT * FROM uber_huge_table ...
       }
-      snmp.push(SnmpTriple.new("#{base_oid}.4.5.7", "integer", proc))
+      snmp.push(Snmp::Triple.new("#{base_oid}.4.5.7", "integer", proc))
     end
 
     agent.run
