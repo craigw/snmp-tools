@@ -34,6 +34,7 @@ module Snmp
       @idle_timeout = args[:idle_timeout] || 60
       @refresh_interval = args[:refresh_interval] || false
       @prep = block
+      @base_oid = args[:base_oid] || ""
     end
 
     def dump
@@ -143,7 +144,7 @@ module Snmp
 
     private
     def populate_triple_set
-      set = Snmp::TripleSet.new
+      set = Snmp::TripleSet.new :base_oid => @base_oid
       @prep.call(set)
       set.make_index
       @triple_set = set

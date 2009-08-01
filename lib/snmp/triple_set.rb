@@ -7,14 +7,26 @@ module Snmp
     #
     attr_reader :triples
 
-    def initialize
+    def initialize(options = {})
+      @base_oid = options[:base_oid]
       @triples = []
     end
 
     # Add a triple to the set
     #
-    def push(t)
-      @triples.push(t)
+    def push(*args)
+      if args.size == 1 && args.first.kind_of?(Triple)
+        t = args.pop
+        if t.oid.oidstr =~ /^#{@base_oid}/
+          @triples.push(t)
+        else
+          raise "Triple `#{t.oidstr}` did not belong to base OID of TripleSet `#{@base_oid}`."
+        end
+      elsif args.size == 3
+        @triples.push(Triple.new(@base_oid.to_s + args[0], args[1], args[2]))
+      else
+        raise ArgumentError, "TripleSet#push takes either 1 Triple or a tuple of (OID String, Data Type, Value) as arguments."
+      end
     end
 
     # Build the triple set index so it's easy to get the previous / next OID
